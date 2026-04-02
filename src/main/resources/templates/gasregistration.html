@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Gas Agency Registration</title>
+	<style>
+	    :root {
+	        --ink: #0f1f3d;
+	        --accent: #1a56db;
+	        --bg: #f5f7fb;
+	        --border: rgba(15,31,61,0.1);
+	    }
+	    body { 
+	        background-color: var(--bg); 
+	        font-family: 'Outfit', sans-serif;
+	        display: flex; justify-content: center; align-items: center; padding: 40px 0; margin: 0;
+	    }
+	    .reg-container { 
+	        background: #ffffff; padding: 40px; border-radius: 12px; 
+	        box-shadow: 0 10px 25px rgba(15, 31, 61, 0.05); width: 550px; 
+	        border: 1px solid var(--border);
+	    }
+	    h2 { color: var(--ink); text-align: center; margin-bottom: 30px; font-weight: 500; }
+	    .section-title { 
+	        font-weight: 500; color: var(--accent); margin-top: 25px; 
+	        border-bottom: 1px solid var(--border); padding-bottom: 8px; font-size: 0.9rem;
+	    }
+	    input, select { 
+	        width: 100%; padding: 12px; margin: 10px 0; border: 1px solid var(--border); 
+	        border-radius: 6px; box-sizing: border-box; font-family: inherit;
+	    }
+	    .grid-row { display: flex; gap: 15px; }
+	    button { 
+	        width: 100%; padding: 14px; background-color: var(--accent); color: white;
+	        border: none; border-radius: 6px; cursor: pointer; font-weight: 500; margin-top: 20px;
+	    }
+	    .home-link { display: block; text-align: center; margin-top: 20px; color: var(--accent); text-decoration: none; font-size: 0.9rem; }
+	</style>
+</head>
+
+ <div class="box">
+	
+	    <h2>Register New Gas Agency</h2>
+
+	    <p th:if="${successMsg}" th:text="${successMsg}" style="color: green; text-align: center; font-weight: bold;"></p>
+	    <p th:if="${error}" th:text="${error}" style="color: red; text-align: center; font-weight: bold;"></p>
+        
+         <form th:action="@{/agency/register}" method="POST">
+            <input type="text" name="agencyId" placeholder="Agency ID" pattern="^AG\d{4}$" title="Invalid Agency ID" required>
+            <input type="text" name="agency_name" placeholder="Agency Name" required>
+            <input type="tel" name="contact_phone" placeholder="Phone Number" pattern="\d{10}" title="Invalid Phone Number" maxlength="10" required>
+            <input type="email" name ="email" placeholder="Email Address" required> 
+           <input type="text" name="office_address" placeholder="Full Office Address" required>
+		   <input type="password" name="password" placeholder="Enter your password" required>
+            <div class="section-title">Office Location</div>
+      
+        
+        <div class="grid-row">
+            <input type="text" name="locality" placeholder="Service Locality" required>
+            <input type="text" name="city" placeholder="City" required>
+        </div>
+        
+        <div class="grid-row">
+            <select name="state" required>
+                <option value="">Select State</option>
+                <option value="Karnataka">Karnataka</option>
+                <option value="Kerala">Kerala</option>
+                <option value="Tamil Nadu">Tamil Nadu</option>
+            </select>
+            <input type="text" name="pincode" placeholder="Pincode" pattern="^56\d{4}$" title="Invalid Pincode" required>
+        </div>
+            <label>Agency Sector:</label>
+
+<select name="sector" required>
+    <option value="Public">Public (Government)</option>
+    <option value="Private">Private (Commercial)</option>
+</select>
+            <button type="submit" name="reg_agency">Complete Registration</button>
+        </form>
+		<a th:href="@{/}" class="home-link">← Home</a>
+    </div>
+</body>
+</html>

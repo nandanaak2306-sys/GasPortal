@@ -1,0 +1,84 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>User Registration</title>
+    <style>
+        body { 
+            background-color: #f4f7f6; /* Plain, professional soft gray/blue bg */
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex; justify-content: center; align-items: center; padding: 40px 0; margin: 0;
+        }
+        .reg-container { 
+            background: #ffffff; padding: 30px; border-radius: 8px; 
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1); width: 450px; 
+        }
+        h2 { color: #333; text-align: center; margin-bottom: 20px; }
+        .section-title { font-weight: bold; color: #007bff; margin-top: 15px; border-bottom: 1px solid #eee; padding-bottom: 5px; }
+        input, select { 
+            width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ddd; 
+            border-radius: 4px; box-sizing: border-box; 
+        }
+        .grid-row { display: flex; gap: 10px; }
+        button { 
+            width: 100%; padding: 12px; background-color: #1a56db; color: white; 
+            border: none; border-radius: 4px; cursor: pointer; font-size: 16px; margin-top: 20px;
+        }
+        button:hover { background-color: #1a56db; }
+		.home-link {
+			    color: #0052cc;
+			    text-decoration: none;
+			    font-size: 0.85rem;
+			}
+			.home-link:hover {
+			    text-decoration: underline;
+			}
+    </style>
+</head>
+<body>
+
+<div class="reg-container">
+    <h2>Create Account</h2>
+    <div th:if="${param.error != null and param.error[0] == 'invalid_aadhar'}" style="color: #721c24; background-color: #f8d7da; border: 1px solid #f5c6cb; padding: 10px; border-radius: 4px; margin-bottom: 15px; text-align: center; font-size: 14px;">
+        Invalid Aadhaar Number.
+    </div>
+    <div th:if="${param.error != null and param.error[0] == 'invalid_pincode'}" style="color: #721c24; background-color: #f8d7da; border: 1px solid #f5c6cb; padding: 10px; border-radius: 4px; margin-bottom: 15px; text-align: center; font-size: 14px;">
+        Invalid Pincode.
+    </div>
+    <div th:if="${param.error != null and param.error[0] == 'email_exists'}" style="color: #721c24; background-color: #f8d7da; border: 1px solid #f5c6cb; padding: 10px; border-radius: 4px; margin-bottom: 15px; text-align: center; font-size: 14px;">
+        Email address already exists. Please use a different email or log in.
+    </div>
+	<form th:action="@{/user/register}" method="POST">
+        <input type="text" name="full_name" placeholder="Full Name" required>
+        <input type="email" name="email" placeholder="Email Address" required>
+        <input type="password" name="password" placeholder="Password" required>
+        <input type="address" name ="address" placeholder="Address" required>
+        <div class="section-title">Delivery Address</div>
+      
+        
+        <div class="grid-row">
+            <input type="text" name="locality" placeholder="Locality" required>
+            <input type="text" name="city" placeholder="City" required>
+        </div>
+        
+        <div class="grid-row">
+            <select name="state" required>
+                <option value="">Select State</option>
+                <option value="Karnataka">Karnataka</option>
+                <option value="Kerala">Kerala</option>
+                <option value="Tamil Nadu">Tamil Nadu</option>
+            </select>
+            <input type="text" name="pincode" placeholder="Pincode" pattern="^56\d{4}$" title="Invalid Pincode" required>
+        </div>
+
+        <div class="grid-row" style="margin-top: 15px;">
+            <input type="text" name="aadhar_no" placeholder="Aadhaar Number" pattern="^[2-9][0-9]{11}$" title="Invalid Aadhaar Number" required>
+        </div>
+        
+        <button type="submit" name="register">Register Now</button>
+    </form>
+	<a th:href="@{/}" class="home-link">← Home</a>
+</div>
+
+</body>
+</html>

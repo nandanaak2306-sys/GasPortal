@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>User Profile</title>
+	<style>
+	    :root {
+	        --ink: #0f1f3d;
+	        --accent: #1a56db;
+	        --bg: #f5f7fb;
+	        --white: #ffffff;
+	        --border: rgba(15, 31, 61, 0.1);
+	    }
+
+	    body { 
+	        font-family: 'Outfit', sans-serif; 
+	        background: var(--bg); 
+	        margin: 0; 
+	        color: var(--ink);
+	    }
+
+	    .container { width: 550px; margin: 60px auto; }
+
+	    h2 { text-align: center; margin-bottom: 30px; font-weight: 500; }
+
+	    .profile-box { 
+	        background: var(--white);
+	        padding: 35px; 
+	        border-radius: 12px;
+	        border: 1px solid var(--border);
+	        box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+	    }
+
+	    label { font-weight: 500; display: block; margin-top: 15px; color: var(--ink); font-size: 0.9rem; }
+
+	    input { 
+	        width: 100%; padding: 12px; margin: 8px 0; 
+	        border: 1px solid var(--border); 
+	        border-radius: 6px;
+	        box-sizing: border-box; 
+	    }
+
+	    button { 
+	        width: 100%; padding: 14px; 
+	        background: var(--accent); 
+	        color: white; border: none; 
+	        border-radius: 6px;
+	        cursor: pointer; margin-top: 20px; 
+	        font-weight: 500;
+	    }
+
+	    .agency-item { 
+	        border: 1px solid var(--border); 
+	        background: #fafbff;
+	        padding: 15px; 
+	        border-radius: 8px;
+	        margin-top: 12px; 
+	        display: flex; justify-content: space-between; align-items: center; 
+	    }
+
+	    .recommended { color: #16a34a; font-weight: 500; font-size: 0.8rem; }
+	    
+	    .back a { color: var(--accent); text-decoration: none; font-size: 0.9rem; }
+	</style>
+</head>
+<body>
+
+<div class="container">
+    <h2 th:text="${user.full_name} + ' - Profile'">User Profile</h2>
+    
+    <div th:if="${param.error != null and param.error[0] == 'invalid_pincode'}" style="color: #721c24; background-color: #f8d7da; border: 1px solid #f5c6cb; padding: 10px; border-radius: 4px; margin-bottom: 15px; text-align: center; font-size: 14px;">
+        Invalid Pincode.
+    </div>
+    
+    <p style="text-align: center;">Status: <b th:text="${user.status}">Active</b></p>
+
+    <div class="profile-box">
+        <form th:action="@{/user/profile}" method="post" th:object="${user}">
+            <label>Full Name</label> 
+            <input type="text" th:field="*{full_name}" required>
+
+            <label>Email (Read-Only)</label> 
+            <input type="text" th:field="*{email}" readonly style="background: #f0f0f0;">
+
+            <label>Current Assigned Agency (Distributor)</label>
+			     <input type="text" 
+			        th:value="${user.selectedAgency != null ? user.selectedAgency.agency_name : 'No Agency Assigned'}" 
+			         readonly class="readonly-field">
+            <label>City</label> 
+            <input type="text" th:field="*{city}" required>
+
+            <label>Locality (Editing triggers Transfer)</label> 
+            <input type="text" th:field="*{locality}" required>
+
+            <label>Address</label> 
+            <input type="text" th:field="*{address}" required>
+
+            <label>Pincode:</label>
+            <input type="text" th:field="*{pincode}" pattern="^56\d{4}$" title="Invalid Pincode" required>
+
+            <button type="submit">Update Details</button>
+        </form>
+
+        <div th:if="${user.status == 'Pending Transfer'}" style="margin-top: 30px;">
+            <h3>Select Agency in <span th:text="${user.locality}"></span></h3>
+            <div th:each="agency : ${agencies}" class="agency-item">
+                <div>
+                    <span th:text="${agency.agency_name}">Agency Name</span>
+                    <br>
+                    <span th:if="${agency.agency_name == user.selectedAgency?.agency_name}" class="recommended">★ Recommended (Same Company)</span>
+                </div>
+                <form th:action="@{/user/select-agency}" method="POST">
+                    <input type="hidden" name="agency_id" th:value="${agency.agencyId}">
+                    <button type="submit" style="width: auto; padding: 5px 15px; background: #333;">Select</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="back">
+        <a th:href="@{/user/dashboard}" style="text-decoration:none; color:black;">← Back to Dashboard</a>
+    </div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Supplier Portal | Log In</title>
+    <style>
+        :root { --brand-blue: #0052cc; --text-main: #1e293b; --bg-body: #f1f5f9; }
+        body { font-family: 'Inter', sans-serif; background: var(--bg-body); display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        .login-card { background: white; padding: 2.5rem; border-radius: 8px; border: 1px solid #e2e8f0; width: 350px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
+        h2 { font-size: 1.1rem; margin-bottom: 1.5rem; color: var(--text-main); text-align: center; }
+        input { width: 100%; padding: 12px; margin-bottom: 1rem; border: 1px solid #e2e8f0; border-radius: 4px; box-sizing: border-box; }
+        .btn-login { background: var(--brand-blue); color: white; border: none; width: 100%; padding: 12px; border-radius: 4px; font-weight: 600; cursor: pointer; }
+		.home-link {
+			    color: #0052cc;
+			    text-decoration: none;
+			    font-size: 0.85rem;
+			}
+			.home-link:hover {
+			    text-decoration: underline;
+			}
+    </style>
+</head>
+<body>
+    <div class="login-card">
+        <h2>Supplier Access</h2>
+		<form th:action="@{/supplier/login}" method="POST">
+		    
+		    <input type="email" name="email" placeholder="Corporate Email" required>
+		    
+		    <input type="password" name="password" placeholder="Password" required>
+		    
+		    <button type="submit" class="btn-login">Sign In to Portal</button>
+
+		    <!-- 👇 ADD HERE -->
+		    <p style="text-align:center; margin-top:10px;">
+		        <a href="/supplier/reset-password" style="color:#0052cc; text-decoration:none;">
+		            Reset Password
+		        </a>
+		    </p>
+			
+
+		</form>
+	
+		<a th:href="@{/}"class="home-link">← Home</a>
+	
+	</div>
+</body>
+</html>

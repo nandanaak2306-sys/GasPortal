@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Agency Control Center</title>
+    <style>
+        :root {
+            --brand-blue: #0052cc;
+            --sidebar-bg: #1e293b;
+            --text-main: #334155;
+            --bg-body: #f8fafc;
+            --border: #e2e8f0;
+        }
+
+        body { font-family: 'Inter', sans-serif; background: var(--bg-body); margin: 0; display: flex; height: 100vh; overflow: hidden; }
+
+        /* Left Sidebar Navigation */
+        .sidebar {
+            width: 260px; background: var(--sidebar-bg); color: white;
+            display: flex; flex-direction: column; padding: 20px 0;
+        }
+        .sidebar-brand { padding: 0 25px 30px; font-size: 1.2rem; font-weight: 700; color: #38bdf8; }
+        .nav-item {
+            padding: 12px 25px; cursor: pointer; color: #94a3b8;
+            font-size: 0.9rem; transition: 0.2s; border-left: 4px solid transparent;
+        }
+        .nav-item:hover, .nav-item.active {
+            background: rgba(255,255,255,0.05); color: white; border-left-color: var(--brand-blue);
+        }
+
+        /* Main Content Area */
+        .main-content { flex: 1; overflow-y: auto; padding: 30px; }
+        .top-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
+        
+        .section { display: none; } /* Hidden by default */
+        .section.active { display: block; }
+
+        .card { background: white; border: 1px solid var(--border); border-radius: 8px; padding: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+        h2 { font-size: 1.1rem; color: var(--sidebar-bg); margin-top: 0; }
+        
+        /* Table Styling */
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+        th { text-align: left; font-size: 0.75rem; color: #64748b; padding: 12px; border-bottom: 2px solid var(--bg-body); }
+        td { padding: 14px 12px; border-bottom: 1px solid #f1f5f9; font-size: 0.85rem; }
+
+        /* Form Elements */
+        .form-group { margin-bottom: 15px; }
+        label { display: block; font-size: 0.8rem; margin-bottom: 5px; color: #64748b; }
+        input, select { width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 4px; box-sizing: border-box; }
+        .btn { padding: 10px 20px; border-radius: 4px; border: none; cursor: pointer; font-weight: 600; }
+        .btn-primary { background: var(--brand-blue); color: white; }
+    </style>
+</head>
+<body>
+
+    
+<div class="sidebar">
+	<a th:href="@{/}" class="nav-item" style="color:#94a3b8;">
+	    Home
+	</a>
+	<div class="nav-item active" onclick="showSection(event, 'overview')">Dashboard Overview</div>
+	<div class="nav-item" onclick="showSection(event, 'approvals')">User Approvals</div>
+	<div class="nav-item" onclick="showSection(event, 'bookings')">Booking Orders</div>
+	<div class="nav-item" onclick="showSection(event, 'suppliers')">Supplier Management</div>
+	<div class="nav-item" onclick="showSection(event, 'stock')">Stock Inventory</div>
+        <div style="margin-top: auto;">
+            <a th:href="@{/agency/logout}" class="nav-item" style="text-decoration: none; display: block; color: #f87171;">Logout</a>
+        </div>
+    </div>
+    <div class="main-content">
+        
+        <div id="overview" class="section" style="display: block;">
+            <div class="top-bar">
+                <h1>Dashboard Overview</h1>
+                <span th:text="${session.loggedInAgency.agency_name}" style="color: var(--brand-blue); font-weight: 600;">Agency Name</span>
+            </div>
+            
+            <div th:if="${(stock.private_stock ?: 0) + (stock.commercial_stock ?: 0) <= (stock.records ?: 0)}" style="background: #fee2e2; border-left: 5px solid #ef4444; padding: 15px; margin-bottom: 25px; border-radius: 6px; color: #b91c1c;">
+                <strong>⚠️ Warning:</strong> Your cylinder stock has reached the threshold level (<span th:text="${stock.records ?: 0}"></span>). Please update your warehouse stock immediately!
+            </div>
+            
+            <div class="card">
+                <h2>Agency Profile</h2>
+				
+				    <p><strong>ID:</strong> <span th:text="${session.loggedInAgency.agencyId}">ID</span></p>
+				    <p><strong>Locality:</strong> <span th:text="${session.loggedInAgency.locality}">Locality</span></p>
+				    <p><strong>Address:</strong> <span th:text="${session.loggedInAgency.office_address}">Address</span></p>
+				    <p><strong>Sector:</strong> <span th:text="${session.loggedInAgency.sector}">Public</span></p>
+				</div>
+</div>
+				<div id="approvals" class="section">
+            <h1>Connection Requests</h1>
+            <div class="card">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Customer Name</th>
+                            <th>Address</th>
+                            <th>Assign Connection ID</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+					
+                        <tr th:each="user : ${users}" th:if="${user.status == 'Pending'}">
+                            <form th:action="@{/agency/approve_user}" method="POST">
+                                <input type="hidden" name="user_id" th:value="${user.user_id}">
+                                <td th:text="${user.full_name}">Name</td>
+                                <td th:text="${user.address}">Address</td>
+                                <td>
+                                    <input type="text" name="connection_id" 
+                                           th:value="${user.connection_id}"
+                                           th:placeholder="${user.connection_id != null} ? ${user.connection_id} : 'CON-001'" 
+                                           th:readonly="${user.connection_id != null}"
+                                           required>
+                                </td>
+                                <td>
+                                    <button type="submit" class="btn btn-primary" 
+                                            th:text="${user.connection_id != null ? 'Verify' : 'Approve'}">Approve</button>
+                                </td>
+                            </form>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div id="bookings" class="section">
+            <h1>Recent Bookings</h1>
+            <div class="card">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Connection ID</th>
+                            <th>Customer</th>
+							<th>Cylinder_Type</th>
+                            <th>Payment</th>
+							<th>Assign Supplier</th> 
+                        </tr>
+                    </thead>
+                    <tbody>
+						<tbody>
+						    <tr th:each="order : ${ordersList}" 
+						        th:if="${order.payment != null and order.payment.paymentStatus == 'Success'}">
+						        <td th:text="${usersMap[order.userId]?.connection_id}"></td>
+						        <td th:text="${usersMap[order.userId]?.full_name}"></td>
+						        <td th:text="${order.cylinder_type}"></td>
+				                <td th:text="'₹ ' + ${order.payment.amount}"></td>
+						        <td style="color:green; font-weight:bold">Confirmed & Paid</td>
+														   
+															<td>
+															    <span th:text="${order.delivery_status}" 
+															          th:style="${order.delivery_status == 'Delivered' ? 'color:green' : 'color:orange'}">
+															    </span>
+															</td>
+
+															<td>
+															    <form th:action="@{/agency/assign-supplier}" method="post" style="display:flex; gap:5px;">
+															        <input type="hidden" name="bookingId" th:value="${order.booking_id}">
+															        
+															        <select name="supplier_id" required style="padding:4px; border-radius:4px; border:1px solid #ccc;">
+															            <option value="">Select Supplier</option>
+															            <option th:each="sup : ${suppliers}" 
+															                    th:value="${sup.supplier_id}" 
+															                    th:text="${sup.supplier_name}"
+															                    th:selected="${order.supplier_id == sup.supplier_id}">
+															            </option>
+															        </select>
+
+															        <button type="submit" style="background:#0052cc; color:white; border:none; padding:5px 8px; border-radius:4px;">
+															            Assign
+															        </button>
+															    </form>
+															</td>
+															</tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div id="suppliers" class="section">
+            <h1>Supplier Network</h1>
+            <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 20px;">
+                <div class="card">
+                    <h2>Add New Supplier</h2>
+                    <p th:if="${param.error != null and param.error[0] == 'invalid_phone'}" style="color: red; font-size: 0.9em; margin-bottom: 15px;">Error: Phone number must be exactly 10 digits.</p>
+                    <form th:action="@{/agency/add-supplier}" method="POST">
+                        <div class="form-group">
+                            <label>Supplier Name</label>
+                            <input type="text" name="supplier_name" required>
+                        </div>
+						<div class="form-group">
+							<label>Phone Number</label>
+							<input type="tel" name="phone_no" pattern="\d{10}" title="Phone number must be exactly 10 digits" maxlength="10" required>
+						</div>
+                        <div class="form-group">
+                            <label>Email Address</label>
+                            <input type="email" name="email" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Save Supplier</button>
+                    </form>
+                </div>
+                <div class="card">
+                    <h2>Directory</h2>
+                    <table>
+                        <thead>
+                            <tr><th>Name</th><th>Email</th><th>Phone</th><th>Status</th><th>Action</th></tr>
+                        </thead>
+						<tbody>
+						    <tr th:each="sup : ${suppliers}">
+						        <td th:text="${sup.supplier_name}"></td>
+						        <td th:text="${sup.email}"></td>
+						        <td th:text="${sup.phone_no}"></td>
+						        
+						        <td th:id="'status-' + ${sup.supplier_id}" 
+						            th:text="${sup.status}"
+						            th:style="${sup.status == 'Active' ? 'color: green; font-weight:bold;' : 'color: red; font-weight:bold;'}">
+						        </td>
+
+						        <td th:id="'action-' + ${sup.supplier_id}" 
+						            th:text="${sup.status == 'Active' ? 'Deactivate' : 'Activate'}">
+						        </td>
+
+						        <td>
+						            <button type="button" class="btn"
+						                    th:onclick="'updateStatus(event, ' + ${sup.supplier_id} + ')'"
+						                    th:text="${sup.status == 'Active' ? 'Deactivate' : 'Activate'}"
+						                    th:style="${sup.status == 'Active' ? 'background:#ef4444; color:white;' : 'background:#22c55e; color:white;'}">
+						            </button>
+						        </td>
+						    </tr>
+						</tbody>
+                      </table>
+                </div>
+            </div>
+        </div>
+
+		<div id="stock" class="section">
+		    <h1>Inventory Management</h1>
+		    
+		    <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 20px;">
+		        <div class="card">
+		            <h2>Update Stock</h2>
+                    <form th:action="@{/agency/update-stock}" method="post">
+                        <div class="form-group">
+                            <label>Domestic Quantity</label>
+                            <input type="number" name="private_stock" placeholder="e.g. 50">
+                        </div>
+                        <div class="form-group">
+                            <label>Commercial Quantity</label>
+                            <input type="number" name="commercial_stock" placeholder="e.g. 100">
+                        </div>
+                        <button type="submit" class="btn btn-primary">Add Stock</button>
+                    </form>
+
+                    <h2 style="margin-top: 25px;">Update Alert Level</h2>
+                    <form th:action="@{/agency/stock/set-threshold}" method="post">
+		                <div class="form-group">
+		                    <label>Threshold Level</label>
+		                    <input type="number" name="level" th:value="${stock.records}" placeholder="Enter limit" required> 
+                        </div>
+		                <button type="submit" class="btn btn-primary">Save Threshold</button>
+		            </form>
+		        </div>
+
+		        <div class="card">
+		            <h2>Current Warehouse Status</h2>
+		            <table>
+		                <thead>
+		                    <tr>
+		                        <th>Category</th>
+		                        <th>Available</th>
+		                        <th>Reserved</th>
+		                        <th>Total (Grand)</th>
+		                        <th>Status</th>
+		                    </tr>
+		                </thead>
+						<tbody>
+						    <tr th:each="s : ${stocksList}">
+						        <td>Domestic</td>
+						        <td th:text="${s.private_stock ?: 0}">0</td>
+
+						        <td rowspan="2" th:text="${s.reserved ?: 0}"></td>
+
+						      
+						        <td rowspan="2" th:text="${s.quantity ?: 0}"></td>
+
+						        <td rowspan="2">
+						            <span th:if="${(s.private_stock ?: 0) + (s.commercial_stock ?: 0) <= (s.records ?: 0)}">
+						                LOW STOCK
+						            </span>
+						            <span th:unless="${(s.private_stock ?: 0) + (s.commercial_stock ?: 0) <= (s.records ?: 0)}">
+						                OK
+						            </span>
+						        </td>
+						    </tr>
+
+						    <tr th:each="s : ${stocksList}">
+						        <td>Commercial</td>
+						        <td th:text="${s.commercial_stock ?: 0}">0</td>
+						    </tr>
+						</tbody>		           
+						 <p style="font-size: 0.75rem; color: #64748b; margin-top: 10px;">
+		                *Recorder Level Alert is set to: <strong th:each="s : ${stocksList}" th:text="${s.records ?: 0}">50</strong>
+		            </p>
+		        </div>
+		    </div>
+		</div>
+		<script>
+		    function showSection(event, sectionId) {
+		        // 1. Hide all sections
+		        var sections = document.getElementsByClassName('section');
+		        for (var i = 0; i < sections.length; i++) {
+		            sections[i].style.display = 'none';
+		        }
+
+		        // 2. Show the specific section clicked
+		        var target = document.getElementById(sectionId);
+		        if (target) {
+		            target.style.display = 'block';
+		        }
+
+		        // 3. Update sidebar active class
+		        var navItems = document.getElementsByClassName('nav-item');
+		        for (var j = 0; j < navItems.length; j++) {
+		            navItems[j].classList.remove('active');
+		        }
+		        
+		        // Use event.currentTarget to target the div clicked
+		        if(event) {
+		            event.currentTarget.classList.add('active');
+		        }
+		    }
+
+		    function updateStatus(event, id) {
+		        event.preventDefault(); 
+		        const button = event.target;
+		        const statusCell = document.getElementById('status-' + id);
+		        const actionCell = document.getElementById('action-' + id);
+
+		        fetch('/agency/toggle-supplier-status?supplier_id=' + id, {
+		            method: 'POST'
+		        })
+		        .then(response => response.text())
+		        .then(data => {
+		            if(data === "SUCCESS") {
+		                alert("Supplier status updated!");
+		                
+		                if (button.innerText.trim() === 'Deactivate') {
+		                    button.innerText = 'Activate';
+		                    button.style.background = '#22c55e'; // Green
+		                    
+		                    if(statusCell) {
+		                        statusCell.innerText = 'Inactive';
+		                        statusCell.style.color = 'red';
+		                    }
+		                    if(actionCell) actionCell.innerText = 'Activate';
+		                } else {
+		                    button.innerText = 'Deactivate';
+		                    button.style.background = '#ef4444'; // Red
+		                    
+		                    if(statusCell) {
+		                        statusCell.innerText = 'Active';
+		                        statusCell.style.color = 'green';
+		                    }
+		                    if(actionCell) actionCell.innerText = 'Deactivate';
+		                }
+		            }
+		        })
+		        .catch(err => console.error("Error:", err));
+		    }
+			// Auto-open section from URL param on page load
+			window.onload = function() {
+			    const params = new URLSearchParams(window.location.search);
+			    const view = params.get('view');
+			    if (view) {
+			        showSection(null, view);
+			    }
+			};
+		</script>
+		</body>
+</html>

@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>Cylinder Booking</title>
+
+<style>
+    body { font-family: 'Outfit', sans-serif; background: #f5f7fb; color: #0f1f3d; }
+    .container {
+        width: 450px; margin: 80px auto; background: white; padding: 40px;
+        border-radius: 12px; border: 1px solid rgba(15,31,61,0.1);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+    }
+    h2 { text-align: center; margin-bottom: 30px; font-weight: 500; font-size: 1.4rem; }
+    .info { 
+        margin-bottom: 18px; padding-bottom: 10px; 
+        border-bottom: 1px solid #f0f2f5; display: flex; justify-content: space-between; 
+    }
+    .info strong { color: #5a6a85; font-weight: 400; font-size: 0.9rem; }
+    .info span { font-weight: 500; }
+    button {
+        width: 100%; padding: 14px; background: #1a56db; color: white;
+        border: none; border-radius: 6px; cursor: pointer; font-weight: 500; margin-top: 20px;
+    }
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<h2>Confirm Cylinder Booking</h2>
+
+<div class="info">
+<strong>Connection ID:</strong>
+<span th:text="${user.connection_id}"></span>
+</div>
+
+<div class="info">
+<strong>Agency:</strong>
+<span th:text="${user.selectedAgency.agency_name}"></span>
+</div>
+
+<div class="info">
+<strong>Quantity:</strong>
+<span th:text="${quantity}"></span>
+</div>
+<div class="info">
+    <strong>Cylinder Type:</strong>
+    <span th:text="${cylinderType}"></span>
+</div>
+<div class="info">
+<strong>Total Price:</strong> 
+<span th:text="'₹' + ${price}"></span>
+</div>
+
+<form th:action="@{/booking/create}" method="POST">
+
+<input type="hidden" name="quantity" th:value="${quantity}">
+<input type="hidden" name="cylinderType" th:value="${cylinderType}">
+<button type="submit">Confirm Booking</button>
+
+</form>
+</div>
+</body>
+</html>

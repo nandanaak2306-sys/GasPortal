@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>User Login - Gas Booking</title>
+	<style>
+	    :root {
+	        --ink: #0f1f3d;
+	        --accent: #1a56db;
+	        --muted: #5a6a85;
+	        --bg: #f5f7fb;
+	        --white: #ffffff;
+	    }
+
+	    body {
+	        font-family: 'Outfit', sans-serif;
+	        background-color: var(--bg);
+	        display: flex;
+	        justify-content: center;
+	        align-items: center;
+	        height: 100vh;
+	        margin: 0;
+	        color: var(--ink);
+	    }
+
+	    .login-container {
+	        background: var(--white);
+	        padding: 40px;
+	        width: 350px;
+	        border-radius: 12px;
+	        box-shadow: 0 10px 25px rgba(15, 31, 61, 0.05);
+	        border: 1px solid rgba(15, 31, 61, 0.08);
+	        text-align: center;
+	    }
+
+	    h2 {
+	        margin-bottom: 25px;
+	        color: var(--ink);
+	        font-weight: 500;
+	        letter-spacing: -0.02em;
+	    }
+
+	    input {
+	        width: 100%;
+	        padding: 12px;
+	        margin: 10px 0;
+	        border: 1px solid rgba(15, 31, 61, 0.15);
+	        border-radius: 6px;
+	        box-sizing: border-box;
+	        font-size: 0.95rem;
+	    }
+
+	    button {
+	        width: 100%;
+	        padding: 12px;
+	        background-color: var(--accent);
+	        color: white;
+	        border: none;
+	        border-radius: 6px;
+	        cursor: pointer;
+	        font-weight: 500;
+	        font-size: 1rem;
+	        margin-top: 15px;
+	        transition: opacity 0.2s;
+	    }
+
+	    button:hover {
+	        opacity: 0.9;
+	    }
+
+	    .register-link {
+	        margin-top: 20px;
+	        font-size: 0.9rem;
+	        color: var(--muted);
+	    }
+
+	    .register-link a, .home-link {
+	        color: var(--accent);
+	        text-decoration: none;
+	        font-weight: 500;
+	    }
+
+	    .error {
+	        color: #e11d48;
+	        background: #fff1f2;
+	        padding: 10px;
+	        border-radius: 4px;
+	        font-size: 0.85rem;
+	        margin-bottom: 15px;
+	    }
+	</style>
+
+    </head>
+
+<body>
+
+<div class="login-container">
+    <h2>User Login</h2>
+
+    <!-- Show error message -->
+    <div class="error" th:if="${error}" th:text="${error}"></div>
+
+    <form th:action="@{/user/login}" method="post">
+
+        <input type="email" name="email" placeholder="Enter Email" required>
+
+        <input type="password" name="password" placeholder="Enter Password" required>
+
+        <button type="submit">Login</button>
+
+    </form>
+
+    <div class="register-link">
+        New User? <a th:href="@{/user/register}">Register Here</a>
+	
+    </div>
+	<a th:href="@{/}"class="home-link">← Home</a>
+</div>
+
+</body>
+</html>

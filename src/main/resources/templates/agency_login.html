@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Agency Login | Secure Portal</title>
+	<style>
+	    body { 
+	        font-family: 'Outfit', sans-serif; background: #f5f7fb; 
+	        display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; 
+	    }
+	    .login-card { 
+	        background: white; padding: 40px; border-radius: 12px; 
+	        box-shadow: 0 10px 25px rgba(0,0,0,0.05); width: 380px; 
+	        border: 1px solid rgba(15, 31, 61, 0.08);
+	    }
+	    h2 { text-align: center; color: #0f1f3d; margin-bottom: 8px; font-weight: 500; }
+	    p.subtitle { text-align: center; font-size: 0.85rem; color: #5a6a85; margin-bottom: 30px; }
+	    label { display: block; margin-top: 15px; font-weight: 500; font-size: 0.85rem; color: #0f1f3d; }
+	    input { 
+	        width: 100%; padding: 12px; margin-top: 8px; border: 1px solid rgba(15, 31, 61, 0.15); 
+	        border-radius: 6px; box-sizing: border-box; 
+	    }
+	    button { 
+	        width: 100%; padding: 12px; background: #1a56db; color: white; 
+	        border: none; border-radius: 6px; margin-top: 25px; cursor: pointer; font-weight: 500; 
+	    }
+	    .home-link { color: #1a56db; text-decoration: none; font-size: 0.85rem; display: block; text-align: center; margin-top: 15px; }
+	</style>
+</head>
+<body>
+
+<div class="login-card">
+    <h2>Agency Login</h2>
+    <p class="subtitle">Enter your official credentials to access the distributor portal</p>
+    
+    <form th:action="@{/agency/login}" method="post">
+        <label>Official Agency ID</label>
+        <input type="text" name="agencyId" placeholder="Your company ID" required>
+
+        <label>Password</label>
+        <input type="password" name="password" placeholder="••••••••" required>
+
+        <div th:if="${error}" class="error" th:text="${error}"></div>
+
+        <button type="submit">Log In</button>
+		
+    </form>
+	<a th:href="@{/}" class="home-link">← Home</a>
+   
+</div>
+
+</body>
+</html>

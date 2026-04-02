@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enterprise Gas Solutions | Professional Portal</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500&family=Outfit:wght@300;400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --ink:        #0f1f3d;
+            --accent:     #1a56db;
+            --accent-dim: rgba(26,86,219,0.08);
+            --accent-mid: rgba(26,86,219,0.18);
+            --muted:      #5a6a85;
+            --border:     rgba(15,31,61,0.10);
+            --surface:    rgba(26,86,219,0.04);
+            --white:      #ffffff;
+            --bg:          #f5f7fb;
+        }
+
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: var(--bg);
+            color: var(--ink);
+            line-height: 1.6;
+            font-weight: 300; /* Light default font weight */
+            min-height: 100vh;
+        }
+
+        /* Removed all bold weights from Headings and Navigation */
+        .navbar {
+            position: fixed;
+            top: 0; width: 100%;
+            z-index: 100;
+            padding: 0 6%;
+            height: 68px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: rgba(255,255,255,0.94);
+            backdrop-filter: blur(18px);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .logo {
+            font-family: 'Playfair Display', serif;
+            font-weight: 400; /* Regular instead of Bold */
+            font-size: 1.3rem;
+            letter-spacing: 0.02em;
+            color: var(--ink);
+        }
+        .logo span { color: var(--accent); }
+
+        .dropbtn {
+            background: transparent;
+            border: 1px solid rgba(26,86,219,0.3);
+            color: var(--accent);
+            padding: 8px 20px;
+            border-radius: 2px;
+            cursor: pointer;
+            font-family: 'Outfit', sans-serif;
+            font-size: 0.8rem;
+            font-weight: 400; /* Light/Regular weight */
+            letter-spacing: 0.05em;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .dropdown-menu a {
+            padding: 13px 18px;
+            text-decoration: none;
+            color: var(--ink);
+            font-size: 0.9rem;
+            font-weight: 300; /* Light weight for links */
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .hero h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(2.5rem, 4.8vw, 3.8rem);
+            font-weight: 400; /* Non-bold elegant heading */
+            line-height: 1.2;
+            color: var(--ink);
+            margin-bottom: 22px;
+        }
+        .hero h1 span { color: var(--accent); font-weight: 400; }
+
+        .hero-desc {
+            font-size: 1.05rem;
+            font-weight: 300;
+            color: var(--muted);
+            max-width: 450px;
+        }
+
+        /* PORTAL CARD */
+        .portal-card {
+            width: 360px;
+            background: #ffffff;
+            border: 1px solid var(--border);
+            padding: 40px;
+            box-shadow: 0 20px 50px rgba(15,31,61,0.05);
+        }
+
+        .portal-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.4rem;
+            font-weight: 400;
+            margin-bottom: 10px;
+        }
+
+        .btn {
+            display: block;
+            width: 100%;
+            padding: 14px;
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 400; /* Clean, non-bold buttons */
+            text-align: center;
+            border-radius: 2px;
+            transition: 0.3s;
+        }
+        .btn-primary {
+            background: var(--accent);
+            color: #ffffff;
+            margin-bottom: 12px;
+        }
+        .btn-ghost {
+            background: transparent;
+            color: var(--muted);
+            border: 1px solid var(--border);
+        }
+
+        /* Rest of the background and structure logic remains the same */
+        .hero { position: relative; min-height: 100vh; display: flex; align-items: center; justify-content: center; padding-top: 68px; }
+        .hero-inner { position: relative; z-index: 1; display: flex; align-items: center; gap: 80px; width: 90%; max-width: 1100px; }
+        .hero-copy { flex: 1; }
+        .dropdown-menu { display: none; position: absolute; right: 0; top: 100%; background: white; border: 1px solid var(--border); box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
+        .dropdown.open .dropdown-menu { display: block; }
+        .link-icon { width: 24px; height: 24px; background: var(--surface); color: var(--accent); display: flex; align-items: center; justify-content: center; border-radius: 50%; font-size: 0.7rem; }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="logo">Gas<span>Portal</span></div>
+        <div class="nav-right">
+            <div class="dropdown" id="staffDropdown">
+                <button class="dropbtn" onclick="toggleDropdown()">
+                    Staff &amp; Partners
+                </button>
+                <div class="dropdown-menu">
+                    <a href="/agency/login"><span class="link-icon">A</span> Agency Login</a>
+                    <a href="/supplier/login"><span class="link-icon">S</span> Supplier Login</a>
+                    <a href="/agency/register"><span class="link-icon">+</span> New Partnership</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <section class="hero">
+        <div class="hero-inner">
+            <div class="hero-copy">
+                <h1>Reliable Energy,<br><span>Delivered</span> Daily.</h1>
+                <p class="hero-desc">Experience a refined approach to energy logistics. Our platform provides precision management for gas bookings and supply chain inventory.</p>
+            </div>
+
+            <div class="portal-card">
+                <div class="portal-title">Customer Portal</div>
+                <p style="margin-bottom: 30px; font-size: 0.9rem; color: var(--muted);">Access your dashboard to manage bookings and view order history.</p>
+
+                <a href="/user/login" class="btn btn-primary">Sign In</a>
+                <a href="/user/register" class="btn btn-ghost">Create Account</a>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        function toggleDropdown() {
+            document.getElementById('staffDropdown').classList.toggle('open');
+        }
+        window.onclick = function(event) {
+            if (!event.target.matches('.dropbtn')) {
+                var dropdowns = document.getElementsByClassName("dropdown");
+                for (var i = 0; i < dropdowns.length; i++) {
+                    dropdowns[i].classList.remove('open');
+                }
+            }
+        }
+    </script>
+</body>
+</html>

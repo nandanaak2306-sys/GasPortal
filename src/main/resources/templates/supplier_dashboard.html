@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Supplier Dashboard</title>
+    <style>
+        body { font-family: Arial; background: #f4f6f9; margin: 0; }
+        .container { width: 90%; margin: auto; margin-top: 30px; }
+        .card { background: white; padding: 20px; border-radius: 8px; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 10px; border-bottom: 1px solid #ddd; }
+        th { background: #007bff; color: white; }
+        button { padding: 5px 10px; background: green; color: white; border: none; }
+        select { padding: 5px; }
+    </style>
+</head>
+<body>
+	<a href="/" style="margin-bottom:10px; display:inline-block; color:#0052cc;">
+	    ← Back to Home
+	</a>
+<div class="container">
+    <div class="card">
+
+        <h2>🚚 Supplier Delivery Dashboard</h2>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Order ID</th>
+                    <th>User Name</th>
+                    <th>Address</th>
+                    <th>Locality</th>
+                    
+                    <th>Cylinder</th>
+                    <th>Status</th>
+                    <th>Update</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                <tr th:each="order : ${orders}">
+
+                    <td th:text="${order.booking_id}"></td>
+
+                    <td th:text="${userMap[order.booking_id].full_name}"></td>
+
+                    <td th:text="${userMap[order.booking_id].address}"></td>
+
+                    <td th:text="${userMap[order.booking_id].locality}"></td>
+
+                    
+
+                    <td th:text="${order.cylinder_type}"></td>
+
+                    <td th:text="${order.delivery_status}"></td>
+
+                    <td>
+                        <form action="/supplier/update-status" method="post">
+                            <input type="hidden" name="booking_id" th:value="${order.booking_id}">
+							<input type="hidden" name="quantity" th:value="${order.quantity}">
+                            <select name="status">
+                                <option value="Shipped">Shipped</option>
+                                <option value="Delivered">Delivered</option>
+                            </select>
+
+                            <button type="submit">Update</button>
+                        </form>
+                    </td>
+
+                </tr>
+            </tbody>
+        </table>
+
+    </div>
+</div>
+
+</body>
+</html>

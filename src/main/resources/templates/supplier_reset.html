@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Reset Password</title>
+	<style>
+	    body {
+	        font-family: 'Outfit', sans-serif;
+	        background: #f5f7fb;
+	        display: flex;
+	        justify-content: center;
+	        align-items: center;
+	        height: 100vh;
+	        margin: 0;
+	    }
+	    .reset-card {
+	        background: white;
+	        padding: 40px;
+	        border-radius: 12px;
+	        box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+	        width: 350px;
+	        text-align: center;
+	        border: 1px solid rgba(15, 31, 61, 0.1);
+	    }
+	    h2 { color: #0f1f3d; margin-bottom: 25px; font-weight: 500; }
+	    input {
+	        width: 100%;
+	        padding: 12px;
+	        margin-bottom: 20px;
+	        border: 1px solid #ddd;
+	        border-radius: 6px;
+	        box-sizing: border-box;
+	    }
+	    button {
+	        width: 100%;
+	        padding: 12px;
+	        background: #1a56db;
+	        color: white;
+	        border: none;
+	        border-radius: 6px;
+	        font-weight: 500;
+	        cursor: pointer;
+	    }
+	</style>
+</head>
+<body>
+
+<h2>Reset Password</h2>
+
+<form action="/supplier/reset-password" method="post">
+    <input type="password" name="newPassword" placeholder="Enter new password" required>
+    <button type="submit">Update Password</button>
+</form>
+
+</body>
+</html>
